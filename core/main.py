@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,status, HTTPException
 import random
+
+
 
 
 app = FastAPI()
@@ -20,9 +22,40 @@ def Create_New_Expense(description: str ,amount: float):
 
     item = {"id" : id, "description" : description, "amount" : amount}
     manage_list.append(item)
-    return item
+    raise HTTPException(status.HTTP_200_OK, detail= item)
                 
 
 @app.get("/expends")
 def Get_All_Expenses():
-    return manage_list
+    
+    raise HTTPException(status.HTTP_200_OK, detail = manage_list)
+
+
+@app.get("/expends/{id}")
+def get_expend(id: int):
+    for item in manage_list:
+        if item["id"] == id:
+            raise HTTPException(status.HTTP_200_OK, detail= item)
+
+    raise HTTPException(status.HTTP_404_NOT_FOUND , detail="object not found")
+
+@app.put("/expends/{id}")
+def update_expend(id: int, description: str, amount: float):
+    for item in manage_list:
+        if item["id"] == id:
+            item["description"] = description
+            item["amount"] = amount
+            raise HTTPException(status.HTTP_202_ACCEPTED, detail=item)
+            
+
+    raise HTTPException(status.HTTP_404_NOT_FOUND , detail="object not found")
+
+@app.delete("/expend/{id}")
+def del_expend(id: int):
+    for item in manage_list:
+        if item["id"] == id:
+            manage_list.remove(item)
+            raise HTTPException(status.HTTP_204_NO_CONTENT, detail="object removed")
+                
+    
+    raise HTTPException(status.HTTP_404_NOT_FOUND , detail="object not found")
