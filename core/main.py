@@ -23,3 +23,6 @@ def Create_New_Expense(description: str ,amount: float):
     return item
                 
 
+@app.get("/expends")
+def Get_All_Expenses():
+    return manage_list
